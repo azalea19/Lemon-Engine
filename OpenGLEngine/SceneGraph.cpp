@@ -19,7 +19,7 @@ SceneGraph::~SceneGraph()
 
 void SceneGraph::Initialise()
 { 
-	cam = new MCamera(m_fov, m_screenWidth, m_screenHeight, m_nearPlane, m_farPlane);
+	//cam = new MCamera(m_fov, m_screenWidth, m_screenHeight, m_nearPlane, m_farPlane);
 	m_projectionMatrix = cam->getProjectionMatrix();
 	m_viewMatrix = cam->getViewMatrix();
 }

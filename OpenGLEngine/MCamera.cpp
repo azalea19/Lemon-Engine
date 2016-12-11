@@ -12,11 +12,11 @@ MCamera::MCamera()
 	calculateCameraMatrix();
 }
 
-MCamera::MCamera(float fov, int screenwidth, int screenheight, float nearplane, float farplane)
-{
-	projectionMatrix = glm::perspective(DegToRad(fov), (float)screenwidth / screenheight, nearplane, farplane);
-	calculateCameraMatrix();
-}
+//MCamera::MCamera(float fov, int screenwidth, int screenheight, float nearplane, float farplane)
+//{
+//	projectionMatrix = glm::perspective(DegToRad(fov), (float)screenwidth / screenheight, nearplane, farplane);
+//	calculateCameraMatrix();
+//}
 
 void MCamera::SetClipPlanes(float near, float far)
 {
