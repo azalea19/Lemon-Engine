@@ -28,32 +28,69 @@ class SoundManager
 	std::unordered_map<string, Mix_Chunk*> soundMap;
 	int numChannels;
 
-	
+	/**
+	* @brief default constructor
+	*/
 	SoundManager();
 
 public:
 
-	
+	/**
+	* @brief Initialises a new sound manager unless one already exists and allocates 16 channels to audio
+	* These channels are pushed in to the vector of channels to be used to play sound
+	*
+	* @return void
+	*/
 	static void initSoundManager();
 
 
-	
+	/**
+	* @brief Returns the sound manager singleton
+	*
+	* @return static SoundManager*
+	*/
 	static SoundManager* GetSoundManager();
 
 
-	
+	/**
+	* @brief Adds a sound to the map of sounds ( Mix_Chunk* )
+	* This function is a wrapper around the Mix_LoadWAV() function in the SDL_mixer API
+	*
+	* @param name - the name of the sound file to add
+	* @param filePath - the file path of the sound to add
+	* 
+	* @return void
+	*/
 	void AddSound(string name, string filePath);
 
-
-
+	/**
+	* @brief Checks if there is a free channel to play the requested sound, if there is and the sound exists inside 
+	* the sound map, the sound is played using Mix_PlayChannel()
+	*
+	* @param name - the name of the sound to play
+	* @param loopCount - the number of times to play the sound. A loop count of -1 will cause the track to loop
+	* continuously until the channel is halted
+	*
+	* @return ChannelHandle
+	*/
 	ChannelHandle PlaySound(string name, int loopCount);
 
-	
-
+	/**
+	* @brief Pauses the requested channel
+	*
+	* @param sound - the channel that the sound you want to pause is playing on
+	*
+	* @return void
+	*/
 	void PauseChannel(ChannelHandle sound);
 
-	
-
+	/**
+	* @brief Resumes playing the requested channel
+	*
+	* @param sound - the channel that the sound you want to resume playing is playing on
+	*
+	* @return void
+	*/
 	void ResumeChannel(ChannelHandle sound);
 
 };

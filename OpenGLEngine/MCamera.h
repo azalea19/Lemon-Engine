@@ -41,8 +41,6 @@ public:
 	*/
 	MCamera();
 
-	MCamera(float fov, int screenwidth, int screenheight, float nearplane, float farplane);
-
 
 	/**
 	* @brief Calculates the forward vector of the camera

@@ -40,5 +40,6 @@ bool Intersects(mSphere const& a, mSphere const& b);
 
 bool Intersects(mSphere const& sphere, mRay const& ray);
 
+//for convenience it would be good to make a second copy of these functions with the object parameters swapped around, obviously these function would simply call the original.
 
 #endif

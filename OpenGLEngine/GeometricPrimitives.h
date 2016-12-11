@@ -14,31 +14,31 @@
 
 struct mSphere
 {
-	vec3 centre;	
-	float radius;	
+	vec3 centre;	///< centre - posisition for the centre of a sphere
+	float radius;	///< radiues - spheres radius
 };
 
 struct mAABB
 {
-	vec3 min;		 
-	vec3 max;		
+	vec3 min;		///< min - the minimum coordinate of an AABB 
+	vec3 max;		///< max - the maxmimum coordinate of an AABB
 };
 
 struct mRay
 {
-	vec3 position;	
-	vec3 direction;	
+	vec3 position;	///< position - start of a ray
+	vec3 direction;	///< direction - the direction of the ray
 };
 
 struct mOBB
 {
-	vec3 corners[8];	
-	vec3 axes[3];		
+	vec3 corners[8];	///< corners- corners of an OBB
+	vec3 axes[3];		///< axes - rotation of an AABB
 };
 
 struct mTriangle
 {
-	vec3 corners[3];	
+	vec3 corners[3];	///< corners - corners of a triangle
 };
 
 #endif // GeometricPrimitives_h__

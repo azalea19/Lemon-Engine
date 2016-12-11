@@ -16,7 +16,13 @@
 
 struct Model; ///< Stores loaded obj file as a model.
 
-
+/**
+* @brief A method that loads an .obj file and returns a pointer to a model
+*
+* @param filePath - Path to the .obj file
+*
+* @return Model*
+*/
 Model* loadObjFile(string filePath);
 
 
