@@ -331,8 +331,8 @@ void Render()
   tr.z = -50 +  1.6f * time;
   pZombie->SetTranslation(tr);
 
-  lightPos.x = -cos(PI * time / 20) * 1000;
-  lightPos.y = sin(PI * time / 20) * 1000;
+  lightPos.x = -cos(PI * time / 60) * 10000;
+  lightPos.y = sin(PI * time / 60) * 10000;
 
   pDecomposeEffect->Bind(sceneTextures[0], sceneTextures[1], sceneTextures[2], sceneTextures[3], sceneTextures[4]);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -363,12 +363,12 @@ void Render()
 
   if (vsLightPos.z > 0)
   {
-    pLightingEffect->Apply(sceneTextures[3], godRayMaskTexture, vec3(2, 2, 2), normalize(-lightPos));
+    pLightingEffect->Apply(sceneTextures[3], godRayMaskTexture, vec3(0.8, 0.8, 0.8), normalize(-lightPos));
     pBlendEffect->Apply(sceneTextures[0], godRayMaskTexture, sceneTextures[4]);
   }
   else
   {
-    pLightingEffect->Apply(sceneTextures[3], godRayMaskTexture, vec3(2, 2, 2), normalize(-lightPos));
+    pLightingEffect->Apply(sceneTextures[3], godRayMaskTexture, vec3(0.8, 0.8, 0.8), normalize(-lightPos));
     pBlendEffect->Apply(godRayMaskTexture, sceneTextures[0], sceneTextures[3]);
     pRayEffect->Apply(sceneTextures[3], sceneTextures[2], sceneTextures[4], ssLightPos);
   }
@@ -379,7 +379,7 @@ void Render()
   //pFXAAEffect->Apply(finalTex, godRayMaskTexture, 16);
   //pFXAAEffect->Apply(godRayMaskTexture, sceneTextures[2], 8);
 
-  if (renderDepth)
+  if (true)
   {
     FrameBuffer::Display(finalTex);
   }

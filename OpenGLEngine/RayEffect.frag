@@ -56,13 +56,7 @@ void main()
 
    color = color / totalWeight;
 
-   color *= exposure;
-
-   if(length(uvLightPos - TexCoord0) < 0.005)
-   {
-		color = vec3(1, 0, 0);
-   }
-   
+   color *= exposure;  
 }
 
 

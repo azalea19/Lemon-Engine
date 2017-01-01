@@ -8,7 +8,7 @@ layout (location = 0) uniform sampler2D inputTex0;
  
  uniform vec3 LIGHT_COLOUR = vec3(1, 1, 1);
  uniform vec3 LIGHT_DIRECTION = vec3(1, -1, 1);
- uniform vec3 AMBIENT_COLOUR = vec3(0.3, 0.3, 0.3);
+ uniform vec3 AMBIENT_COLOUR = vec3(0.1, 0.1, 0.1);
 
 void main() 
 {
