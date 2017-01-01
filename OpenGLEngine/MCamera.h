@@ -2,6 +2,7 @@
 #define MCamera_H__
 
 #include "Types.h"
+#include "AffineTransformable.h"
 
 /**
 * @file   MCamera.h
@@ -19,27 +20,17 @@
 */
 
 
-class MCamera
+class MCamera : public AffineTransformable
 {
-	vec3 position;		///<the posistion of the camera
-	float yaw;			///< the yaw of the camera
-	float pitch;		///< the pitch of the camera
-	mat4 cameraMatrix;	///< the cameras matrix
-	mat4 viewMatrix;	///< the view matrix
 	mat4 projectionMatrix;	///< the projection matrix
-
-	/**
-	* @brief calculates the cameras matrix
-	*
-	* @return void
-	*/
-	void calculateCameraMatrix();
 
 public:
 	/**
 	* @brief default constructor
 	*/
 	MCamera();
+
+	MCamera(float fov, int screenwidth, int screenheight, float nearplane, float farplane);
 
 
 	/**
@@ -84,36 +75,13 @@ public:
 	*/
 	vec3 Right() const;
 
-	/*
-	* @brief Set the yaw of the camera
-	*
-	* @return void
-	*/
-	void SetYaw(float deg);
-	/**
-	* @brief Set the pitch of the camera
-	*
-	* @return void
-	*/
-	void SetPitch(float deg);
 	/**
 	* @brief Set the position of the camera
 	*
 	* @return void
 	*/
 	void SetPosition(vec3 pos);
-	/**
-	* @brief Get the yaw of the camera
-	*
-	* @return float
-	*/
-	float getYaw() const;
-	/**
-	* @brief Get the pitch of the camera
-	*
-	* @return float
-	*/
-	float getPitch() const;
+
 	/**
 	* @brief Get the position of the camera
 	*

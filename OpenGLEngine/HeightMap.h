@@ -1,16 +1,31 @@
-#include <cstdint>
+#ifndef HeightMap_h__
+#define HeightMap_h__
 
-typedef float (*HeightMapSampleFunc)(int64_t x, int64_t y, void *args);
+#include "Types.h"
+#include "Interface2D.h"
 
-float* CreateHeightMap(int64_t width, int64_t height, HeightMapSampleFunc sampleFunc, void *args);
-
-
-
-struct WaveSampleArgs
+class HeightMap
 {
-	float minHeight;
-	float maxHeight;
-	float waveLength;
+public:
+
+  HeightMap(string const& filePath);
+
+  void LoadHeightMap();
+
+  //Assuming 4 bytes per pixel 32 bit image.
+  float GetHeightValue(vec2i const& pixelPos);
+
+  int GetWidth() const;
+
+  int GetHeight() const;
+
+private:
+
+  uint* m_pHeightMap;
+  vec2 m_heightMapDimensions;
+  string m_heightMapFile;
+
 };
 
-float XWaveSample(int64_t x, int64_t y, void* args);
+
+#endif // HeightMap_h__

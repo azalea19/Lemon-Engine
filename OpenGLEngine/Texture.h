@@ -19,22 +19,16 @@
 */
 
 
-/**
-* @brief Load a .BMP file using our custom loader
-*
-* @param imagepath - Path of a .bmp file to load
-*
-* @return GLuint
-*/
 GLuint loadBMP(const char * imagepath);
 
-/**
-* @brief Load an image file of various filetypes 
-*
-* @param imagepath - Path of a file to load
-*
-* @return GLuint
-*/
-GLuint loadImage(const char * imagepath);
+GLuint loadImage(const char * imagepath, bool useMips = true);
+
+GLuint CreateColourTexture(int width = 0, int height = 0);
+
+GLuint CreateColourFTexture(int width = 0, int height = 0);
+
+GLuint CreateDepthTexture(int width = 0, int height = 0);
+
+GLuint CreateVec3Texture(int width = 0, int height = 0);
 
 #endif

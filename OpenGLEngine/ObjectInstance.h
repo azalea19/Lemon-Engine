@@ -2,6 +2,9 @@
 #define ObjectInstance_h__
 
 #include "RenderableObject.h"
+#include "IRenderable.h"
+#include "AffineTransformable.h"
+
 
 /**
 * @file   ObjectInstance.h
@@ -13,152 +16,29 @@
 */
 
 
-struct ObjectInstance
+struct ObjectInstance : public IRenderable, public IAnimatable, public AffineTransformable
 {
 
-	/**
-	* @brief The object instance structure represents an instance of a model
-	*
-	* @param newZ - the new value for z
-	* @param index - the index of the vector to set
-	*/
-	ObjectInstance(RenderableObject* object, glm::vec3 coords = glm::vec3(0, 0, 0), glm::vec3 scaleFactor = glm::vec3(1, 1, 1), float a_yaw = 0, float a_pitch = 0);
+public: 
 
-	/**
-	* @brief Sets the position that the model will be rendered at in the world
-	*
-	* @param coords - the new posistion of the model
-	*
-	* @return void
-	*/
+	ObjectInstance(RenderableObject* object, vec3 const& coords = glm::vec3(0, 0, 0), vec3 const& scaleFactor = vec3(1, 1, 1), float yaw = 0, float pitch = 0);
 
-	void SetPosition(glm::vec3 coords);
+	std::vector<vec3> GetVertices(mat4 const& parentModelMatrix = mat4()) const;
 
-	/**
-	* @brief Sets the scale that the model will be rendered at in the world
-	*
-	* @param a_scale - new value for scale
-	*
-	* @return void
-	*/
-	void SetScale(glm::vec3 a_scale);
+	mat4 GetWorldMatrix() const;
 
-	/**
-	* @brief Rotates the model by a specified number of degrees around the x-axis
-	*
-	* @param degrees - the new value for pitch
-	*
-	* @return void
-	*/
-	void SetPitch(float degrees);
-
-	/**
-	* @brief Rotates the model by a specified number of degrees around the y-axis
-	*
-	* @param degrees - the new value for yaw
-	*
-	* @return void
-	*/
-
-	void SetYaw(float degrees);
-
-	/**
-	* @brief Returns the number of sub objects in the model rendered with a different material
-	*
-	* @return int
-	*/
-	int SubObjectCount();
-
-	/**
-	* @brief Returns a vector of vertices for the specified sub object
-	*
-	* @param subIndex - the desired subObject
-	* @param parentModelMatrix - the parent matrix
-	*
-	* @return std::vector<glm::vec3>
-	*/
-	std::vector<glm::vec3> GetVertices(int subIndex, glm::mat4 parentModelMatrix = glm::mat4());
-
-
-/**
-* @brief Returns climbability of subObject
-*
-* @param subIndex - the index of the subobject desired
-*
-* @return bool
-*/
-
-bool IsClimbable(int subIndex);
-
-/**
-* @brief Gets the model matrix
-*
-* @return glm::mat4
-*/
-glm::mat4 GetModelMatrix();
-
-
-/**
-* @brief Render an object
-*
-* @param viewMatrix - the view matrix
-* @param projectionMatrix - the projection matrix
-* @param parentModelatrix - the parent model matrix
-*
-* @return void
-*/
-
-void Render(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, glm::mat4 parentModelMatrix = glm::mat4());
-
-/**
-* @brief gets a renderable object
-*
-* @return RenderableObject address
-*/
-
-const RenderableObject & GetRenderableObject() const;
-
-
-/**
-* @brief gets the posistion of the object
-*
-* @return vec3
-*/
-
-glm::vec3 GetPosition() const;
-
-/**
-* @brief gets the scale of the object
-*
-* @return vec3
-*/
-
-glm::vec3 GetScale() const;
-
-/**
-* @brief gets the yaw of the object.
-*
-* @return float
-*/
-
-float GetYaw() const;
-
-/**
-* @brief gets the pitch of the object
-*
-* @return float
-*/
-float GetPitch() const;
-
-	
+  virtual void Render(mat4 const& worldMatrix, mat4 const& viewMatrix, mat4 const& projectionMatrix, float time = 0) const override;
+  virtual void SetActiveAnimation(int animationIndex) override;
+  virtual int GetActiveAnimationIndex() const override;
+  virtual int GetAnimationCount() const override;
+  virtual string const& GetAnimationName(int animationIndex) const override;
+  virtual int GetAnimationIndex(string const& animationName) const override;
 
 private:
 
-	RenderableObject * m_renderableObject;		///< pObject - a pointer to a renderable object
-	glm::vec3 position;				///< posistion - the posistion of the object
-	glm::vec3 scale;				///< scale - the scale of the object
-	float yaw = 0;					///< yaw - the yaw of the object
-	float pitch = 0;				///< pitch - the pitch of the object
+	RenderableObject * m_pRenderableObject;		
+  int m_activeAnimation;
+
 };
 
 #endif //ObjectInstance_h__

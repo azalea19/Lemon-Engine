@@ -1,233 +1,236 @@
 #include "RenderableObject.h"
+#include "Model.h"
+#include "Mesh.h"
 #include "ShaderLibrary.h"
-#include "Texture.h"
+#include "TextureLibrary.h"
+#include "FrameBuffer.h"
+#include "BloomEffect.h"
+#include "FXAAEffect.h"
+#include "Screen.h"
+#include "InputManager.h"
 
-void RenderableObject::Render(glm::mat4 viewMatrix, glm::mat4 projectionMatrix, glm::mat4 modelMatrix)
+RenderableObject::RenderableObject(string const& name, string const& filename)
+  : m_VAO(0)
 {
+  memset(m_buffers, 0, sizeof(GLuint)* BT_NUM_BUFFERS);
+  m_pModel = new Model(name, filename);
+  Initialise();
+}
 
+RenderableObject::~RenderableObject()
+{
+  Destroy();
+}
+
+void RenderableObject::RenderMesh(int meshIndex) const
+{
+  BindMaterial(meshIndex);
+  IndexRange const& range = m_pModel->GetMeshIndexRange(meshIndex);
+  glDrawElementsBaseVertex(GL_TRIANGLES, range.indexCount, GL_UNSIGNED_INT, (void*)(sizeof(int)*range.firstIndexOffset), range.firstVertex);
+}
+
+void RenderableObject::SetFillMode(FillMode fillMode) const
+{
+  switch (fillMode)
+  {
+    case FM_Line:
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      break;
+    case FM_Fill:
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      break;
+  }
+}
+
+void RenderableObject::UpdateAnimation(float time, int activeAnimation) const
+{
+  const Shader* shader = ShaderLibrary::getLib()->currentShader();
+  if (m_pModel->HasAnimation() && activeAnimation >= 0)
+  {
+    std::vector<glm::mat4> bones = m_pModel->GetBoneTransforms(activeAnimation, time);
+    ShaderLibrary::getLib()->currentShader()->transmitUniformArray("BONES", bones.data(), bones.size());
+    shader->transmitUniform("ANIMATION_ENABLED", 1);
+  }
+  else
+  {
+    shader->transmitUniform("ANIMATION_ENABLED", 0);
+  }
+}
+
+void RenderableObject::UploadMatrices(mat4 const& worldMatrix, mat4 const& viewMatrix, mat4 const& projectionMatrix) const
+{
+  const Shader* shader = ShaderLibrary::getLib()->currentShader();
+
+  if (shader->hasUniform("WORLD_MATRIX"))
+    shader->transmitUniform("WORLD_MATRIX", worldMatrix);
+
+  if (shader->hasUniform("VIEW_MATRIX"))
+    shader->transmitUniform("VIEW_MATRIX", viewMatrix);
+
+  if (shader->hasUniform("PROJECTION_MATRIX"))
+    shader->transmitUniform("PROJECTION_MATRIX", projectionMatrix);
+
+  if (shader->hasUniform("INVERSE_WORLD_MATRIX"))
+    shader->transmitUniform("INVERSE_WORLD_MATRIX", glm::inverse(worldMatrix));
+
+  if (shader->hasUniform("INVERSE_VIEW_MATRIX"))
+    shader->transmitUniform("INVERSE_VIEW_MATRIX", glm::inverse(viewMatrix));
+
+  if (shader->hasUniform("INVERSE_PROJECTION_MATRIX"))
+    shader->transmitUniform("INVERSE_PROJECTION_MATRIX", glm::inverse(projectionMatrix));
+
+  if (shader->hasUniform("WORLD_VIEW_PROJECTION_MATRIX"))
+  {
+    glm::mat4 wvp = projectionMatrix * viewMatrix * worldMatrix;
+    shader->transmitUniform("WORLD_VIEW_PROJECTION_MATRIX", wvp);
+  }
+
+  if (shader->hasUniform("CAMERA_POSITION"))
+  {
+	  vec4 cam =  inverse(viewMatrix) * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	  shader->transmitUniform("CAMERA_POSITION", vec3(cam.x, cam.y, cam.z));
+  }
+
+}
+
+void RenderableObject::Initialise()
+{
+  std::vector<vec3> const& vertices = m_pModel->GetVertices();
+  std::vector<int> const& indices = m_pModel->GetIndices();
+  std::vector<vec3> const& normals = m_pModel->GetNormals();
+  std::vector<vec2> const& diffuseTexCoords = m_pModel->GetTexCoords(TT_Diffuse);
+  std::vector<vec2> const& alphaTexCoords = m_pModel->GetTexCoords(TT_Alpha);
+  std::vector<VertexBoneIDs> const& boneIDs = m_pModel->GetBoneIDs();
+  std::vector<VertexBoneWeights> const& boneWeights = m_pModel->GetBoneWeights();
+  std::vector<vec4> const& vertexColours = m_pModel->GetVertexColours();
+  
+  glGenVertexArrays(1, &m_VAO);
+  glBindVertexArray(m_VAO);
+
+  glGenBuffers(BT_NUM_BUFFERS, m_buffers);
+
+  glBindBuffer(GL_ARRAY_BUFFER, m_buffers[BT_VERTEX_BUFFER]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0])*vertices.size(), &vertices[0], GL_STATIC_DRAW);
+  glEnableVertexAttribArray(AL_Vertices);
+  glVertexAttribPointer(AL_Vertices, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glBindBuffer(GL_ARRAY_BUFFER, m_buffers[BT_DIFFUSE_TEXCOORD_BUFFER]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(diffuseTexCoords[0])*diffuseTexCoords.size(), &diffuseTexCoords[0], GL_STATIC_DRAW);
+  glEnableVertexAttribArray(AL_DiffuseTexCoords);
+  glVertexAttribPointer(AL_DiffuseTexCoords, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glBindBuffer(GL_ARRAY_BUFFER, m_buffers[BT_ALPHA_TEXCOORD_BUFFER]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(alphaTexCoords[0])*alphaTexCoords.size(), &alphaTexCoords[0], GL_STATIC_DRAW);
+  glEnableVertexAttribArray(AL_AlphaTexCoords);
+  glVertexAttribPointer(AL_AlphaTexCoords, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glBindBuffer(GL_ARRAY_BUFFER, m_buffers[BT_NORMAL_BUFFER]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(normals[0])*normals.size(), &normals[0], GL_STATIC_DRAW);
+  glEnableVertexAttribArray(AL_Normals);
+  glVertexAttribPointer(AL_Normals, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glBindBuffer(GL_ARRAY_BUFFER, m_buffers[BT_BONE_ID_BUFFER]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(boneIDs[0])*boneIDs.size(), &boneIDs[0], GL_STATIC_DRAW);
+  glEnableVertexAttribArray(AL_BoneIDs);
+  glVertexAttribIPointer(AL_BoneIDs, 4, GL_INT, 0, 0);
+
+  glBindBuffer(GL_ARRAY_BUFFER, m_buffers[BT_BONE_WEIGHT_BUFFER]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(boneWeights[0])*boneWeights.size(), &boneWeights[0], GL_STATIC_DRAW);
+  glEnableVertexAttribArray(AL_BoneWeights);
+  glVertexAttribPointer(AL_BoneWeights, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glBindBuffer(GL_ARRAY_BUFFER, m_buffers[BT_VERTEX_COLOUR_BUFFER]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertexColours[0])*vertexColours.size(), &vertexColours[0], GL_STATIC_DRAW);
+  glEnableVertexAttribArray(AL_VertexColours);
+  glVertexAttribPointer(AL_VertexColours, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffers[BT_INDEX_BUFFER]);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), &indices[0], GL_STATIC_DRAW);
+
+  glBindVertexArray(NULL);
+
+}
+
+void RenderableObject::Render(mat4 const& worldMatrix, mat4 const& viewMatrix, mat4 const& projectionMatrix, float time, int animationIndex) const
+{
+  UploadMatrices(worldMatrix, viewMatrix, projectionMatrix);
+  SetFillMode(FM_Fill);
+
+  UpdateAnimation(time, animationIndex);
+
+  glBindVertexArray(m_VAO);
+  for (int i = 0; i < m_pModel->GetMeshCount(); i++)
+    RenderMesh(i);
+  glBindVertexArray(NULL);
+}
+
+void RenderableObject::Destroy()
+{
+  if (m_buffers[0] != 0)
+  {
+    glDeleteBuffers(BT_NUM_BUFFERS, m_buffers);
+  }
+
+  if (m_VAO != 0)
+  {
+    glDeleteVertexArrays(1, &m_VAO);
+    m_VAO = 0;
+  }
+}
+
+int RenderableObject::GetAnimationCount() const
+{
+  return m_pModel->GetAnimationCount();
+}
+
+int RenderableObject::GetAnimationIndex(string const& animationName) const
+{
+  return m_pModel->GetAnimationIndex(animationName);
+}
+
+string const& RenderableObject::GetAnimationName(int animationIndex) const
+{
+  return m_pModel->GetAnimationName(animationIndex);
+}
+
+IMesh const& RenderableObject::GetMesh(int meshIndex) const
+{
+  return m_pModel->GetMesh(meshIndex);
+}
+
+int RenderableObject::GetMeshCount() const
+{
+  throw std::logic_error("The method or operation is not implemented.");
+}
+
+void RenderableObject::BindMaterial(int meshIndex) const
+{
   const Shader* shader = ShaderLibrary::getLib()->currentShader();
   
-  //enable depth testing
-  glEnable(GL_DEPTH_TEST);
+    string diffuseTexture = m_pModel->GetMeshTextureName(meshIndex, TT_Diffuse);
+    
+    if (diffuseTexture != "Texture not supplied.")
+    {
+      glActiveTexture(GL_TEXTURE0 + TL_Diffuse);
+      glBindTexture(GL_TEXTURE_2D, TextureLibrary::GetInstance().GetTexture(diffuseTexture));
+      shader->transmitUniform("DIFFUSE_MAP", int(TL_Diffuse));
+      shader->transmitUniform("DIFFUSE_SOURCE", int(DS_Texture));
+    }
+    else
+    {
+      shader->transmitUniform("DIFFUSE_SOURCE", int(DS_VertexColour));
+    }
 
-  //enable textures
-  glEnable(GL_TEXTURE_2D);
-
-  //enable shader program
-  //glUseProgram(defaultProgram);
-
-  if(shader->hasUniform("mvp"))
-  {
-	  UploadMVPMatrix(projectionMatrix, viewMatrix, modelMatrix);
-  }
-  if (shader->hasAttribute("position"))
-  {
-	  
-	  //enables the use of "position" in the vertex shader
-	  glEnableVertexAttribArray(shader->attribute("position"));
-
-	  //sets gVBO as the current ARRAY_BUFFER
-	  glBindBuffer(GL_ARRAY_BUFFER, gVBO);
-
-	  //sets "position" to point to the current ARRAY_BUFFER
-	  glVertexAttribPointer(shader->attribute("position"), 3, GL_FLOAT, GL_FALSE, 0, NULL);
-  }
-  if (shader->hasAttribute("uvIn"))
-  {
-
-	  //enables the use of "uvIn" in the vertex shader
-	  glEnableVertexAttribArray(shader->attribute("uvIn"));;
-
-	  //sets gUVBO as the current ARRAY_BUFFER
-	  glBindBuffer(GL_ARRAY_BUFFER, gUVBO);
-
-	  //sets "position" to point to the current ARRAY_BUFFER
-	  glVertexAttribPointer(shader->attribute("uvIn"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
-  }
-  if (shader->hasAttribute("normal"))
-  {
-
-	  //enables the use of "uvIn" in the vertex shader
-	  glEnableVertexAttribArray(shader->attribute("normal"));;
-
-	  //sets gUVBO as the current ARRAY_BUFFER
-	  glBindBuffer(GL_ARRAY_BUFFER, gNBO);
-
-	  //sets "position" to point to the current ARRAY_BUFFER
-	  glVertexAttribPointer(shader->attribute("normal"), 3, GL_FLOAT, GL_FALSE, 0, NULL);
-  }
-
-  //////////TEXTURES/////////
-  
-
-  for (uint32_t i = 0; i < subObjects.size(); i++)
-  {
-	  if (shader->hasUniform("diffuse"))
-	  {
-		  //Set Texture unit 0 as the current texture unit
-		  glActiveTexture(GL_TEXTURE0);
-
-		  //bind our texture to the current texture unit
-		  glBindTexture(GL_TEXTURE_2D, subObjects[i].texture);
-
-		  //Set our sampler to sample the current texure unit
-		  shader->transmitUniform("diffuse", 0);
-	  }
-	  glDrawArrays(GL_TRIANGLES, subObjects[i].firstFace * 3, subObjects[i].faceCount * 3);
-  }
-
-  if (shader->hasAttribute("position"))
-  {
-	  //disables use of "position" in the vertex shader
-	  glDisableVertexAttribArray(shader->attribute("position"));
-  }
-
-  if (shader->hasAttribute("uvIn"))
-  {
-	  //disables use of "uvIn" in the vertex shader
-	  glDisableVertexAttribArray(shader->attribute("uvIn"));
-  }
-
-  if (shader->hasAttribute("normal"))
-  {
-	  //disables use of "uvIn" in the vertex shader
-	  glDisableVertexAttribArray(shader->attribute("normal"));
-  }
+    string alphaTexture = m_pModel->GetMeshTextureName(meshIndex, TT_Alpha);
+    if (alphaTexture != "Texture not supplied.")
+    {
+      glActiveTexture(GL_TEXTURE0 + int(TL_Alpha));
+      glBindTexture(GL_TEXTURE_2D, TextureLibrary::GetInstance().GetTexture(alphaTexture));
+      shader->transmitUniform("ALPHA_MAP", int(TL_Alpha));
+      shader->transmitUniform("USE_ALPHA_MAP", 1);
+    }
+    else
+    {
+      shader->transmitUniform("USE_ALPHA_MAP", 0);
+    }
 }
-
-void RenderableObject::UploadMVPMatrix(glm::mat4 projectionMatrix, glm::mat4 viewMatrix, glm::mat4 modelMatrix)
-{
-	const Shader* shader = ShaderLibrary::getLib()->currentShader();
-	if (shader->hasUniform("modelMatrix"))
-	{
-		shader->transmitUniform("modelMatrix", modelMatrix);
-	}
-	if (shader->hasUniform("viewMatrix"))
-	{
-		shader->transmitUniform("viewMatrix", viewMatrix);
-	}
-	if (shader->hasUniform("projectionMatrix"))
-	{
-		shader->transmitUniform("projectionMatrix", projectionMatrix);
-	}
-
-	if (shader->hasUniform("invModelMatrix"))
-	{
-		shader->transmitUniform("invModelMatrix", glm::inverse(modelMatrix));
-	}
-	if (shader->hasUniform("invViewMatrix"))
-	{
-		shader->transmitUniform("invViewMatrix", glm::inverse(viewMatrix));
-	}
-	if (shader->hasUniform("invProjectionMatrix"))
-	{
-		shader->transmitUniform("invProjectionMatrix", glm::inverse(projectionMatrix));
-	}
-	if (shader->hasUniform("normMatrix"))
-	{
-		shader->transmitUniform("normMatrix", glm::transpose(glm::inverse(modelMatrix)));
-	}
-	if (shader->hasUniform("campos"))
-	{
-		vec4 campos = glm::inverse(viewMatrix) * vec4(0, 0, 0, 1);
-		shader->transmitUniform("campos", vec3(campos.x, campos.y, campos.z));
-	}
-
-	if (shader->hasUniform("mvp"))
-	{
-		glm::mat4 mvm = projectionMatrix * viewMatrix * modelMatrix;
-		shader->transmitUniform("mvp", mvm);
-	}
-
-}
-
-bool RenderableObject::uploadBuffers()
-{
-  std::vector<GLfloat> verts = myModel->GetVertexArray();
-  std::vector<GLfloat> uvs = myModel->GetUVArray();
-  std::vector<GLfloat> norms = myModel->GetNormalArray();
-
-  glBindBuffer(GL_ARRAY_BUFFER, gVBO);
-  glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(GLfloat), verts.data(), GL_STATIC_DRAW);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-  glBindBuffer(GL_ARRAY_BUFFER, gUVBO);
-  glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(GLfloat), uvs.data(), GL_STATIC_DRAW);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-  glBindBuffer(GL_ARRAY_BUFFER, gNBO);
-  glBufferData(GL_ARRAY_BUFFER, norms.size() * sizeof(GLfloat), norms.data(), GL_STATIC_DRAW);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-  return true;
-}
-
-bool RenderableObject::generateBuffers()
-{
-  glGenBuffers(1, &gVBO);
-  glGenBuffers(1, &gUVBO);
-  glGenBuffers(1, &gNBO);
-  return true;
-}
-
-std::vector<glm::vec3> RenderableObject::GetVertices(int subIndex)
-{
-  return myModel->GetVertexArray(subIndex);
-}
-
-int RenderableObject::SubObjectCount()
-{
-  return myModel->subObjects.size();
-}
-
-void RenderableObject::GenerateSubObjects()
-{
-  for (uint32_t i = 0; i < myModel->subObjects.size(); i++)
-  {
-    TextureData& object = myModel->subObjects[i];
-    GLint tex = 0;
-    tex = loadImage(object.texturePath.c_str());
-    subObjects.push_back({ object.firstFace, object.faceCount, tex });
-  }
-}
-
-RenderableObject::RenderableObject(string modelPath, bool normalized)
-{
-  myModel = loadObjFile(modelPath);
-
-  if (normalized)
-  {
-	  myModel->Normalize();
-  }
-
-  myModel->GenerateSmoothNormals();
-
-  generateBuffers();
-  GenerateSubObjects();
-  uploadBuffers();
-
-}
-
-bool RenderableObject::IsClimbable(int subIndex)
-{
-	return myModel->IsClimbable(subIndex);
-}
-/*
-void RenderableObject::RemoveVertices()
-{
-
-	std::vector<triangle> triVec;
-	myModel->faces = triVec;
-
-	std::vector<glm::vec3> vec3Vec;
-	myModel->normals = vec3Vec;
-	myModel->vertices = vec3Vec;
-
-	std::vector<glm::vec2> vec2Vec;
-	myModel->uvs = vec2Vec;
-
-	std::vector<TextureData> subObjVec;
-	myModel->subObjects = subObjVec;
-
-	
-}*/

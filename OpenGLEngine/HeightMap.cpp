@@ -1,24 +1,44 @@
 #include "HeightMap.h"
-#include <cstdlib>
-#include <math.h>
-#include "MMath.h"
+#include "Interface2D.h"
+#include "SDL_image.h"
 
-float * CreateHeightMap(int64_t width, int64_t height, HeightMapSampleFunc sampleFunc, void * args)
+HeightMap::HeightMap(string const& filePath) 
+  : m_heightMapFile(filePath)
 {
-	float *heightMap = (float*)malloc(width * height * sizeof(float));
-
-	for (int64_t y = 0; y < height; y++)
-		for (int64_t x = 0; x < width; x++)
-			heightMap[y * width + x] = sampleFunc(x, y, args);
-
-	return heightMap;
+  LoadHeightMap();
 }
 
-float XWaveSample(int64_t x, int64_t y, void * _args)
+void HeightMap::LoadHeightMap()
 {
-	WaveSampleArgs *args = (WaveSampleArgs*)_args;
+  SDL_Surface* pHeightMapSurface = GetSurfaceFromImg(m_heightMapFile);
+  m_heightMapDimensions = GetImageDimensions(pHeightMapSurface);
+  m_pHeightMap = (uint*)malloc(sizeof(uint) * m_heightMapDimensions.x * m_heightMapDimensions.y);
+  m_pHeightMap = GetPixelData(pHeightMapSurface);
+}
 
-	float val = sin(x * 2 * PI / args->waveLength);
-	val = (val + 1) * 0.5f;
-	return mLerp(args->minHeight, args->maxHeight, val);
+float HeightMap::GetHeightValue(vec2i const& pixelPos)
+{
+  uint pos = (m_heightMapDimensions.x * pixelPos.y) + pixelPos.x;
+
+  //Color = 0xRRGGBBAA
+  //Color packed in to a four-byte integer with RGBA component
+  //We need mask and shift to get back the color channels.
+
+  ubyte redChannel = ubyte((m_pHeightMap[pos] & 0x00FF0000) >> 16);
+  ubyte blueChannel = ubyte((m_pHeightMap[pos] & 0x0000FF00) >> 8);
+  ubyte greenChannel = ubyte((m_pHeightMap[pos] & 0x000000FF) >> 0);
+
+  float ave = (redChannel + blueChannel + greenChannel) / 3.f;
+
+  return ave / 255;
+}
+
+int HeightMap::GetWidth() const
+{
+  return m_heightMapDimensions.x;
+}
+
+int HeightMap::GetHeight() const
+{
+  return m_heightMapDimensions.y;
 }

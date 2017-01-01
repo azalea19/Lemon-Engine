@@ -6,6 +6,7 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "Types.h"
+#include "Screen.h"
 
 struct FloatColor
 {
@@ -267,11 +268,15 @@ GLuint UploadTextureMipped(SDL_Surface* source)
 	return textureID;
 }
 
-GLuint loadImage(const char * imagepath)
+GLuint loadImage(const char * imagepath, bool useMips)
 {
 	GLuint TextureID = 0;
 
 	SDL_Surface* rawSurface = IMG_Load(imagepath);
+
+	if (!rawSurface)
+		return 1;
+
 	SDL_Surface* convertedSurface = ConvertToRGBA(rawSurface);
 	SDL_Surface* flippedSurface = FlipSurface(convertedSurface);
 
@@ -285,12 +290,114 @@ GLuint loadImage(const char * imagepath)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glGenerateMipmap(GL_TEXTURE_2D);
+  
+  if (useMips)
+  {
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D);
+  }
+  else
+  {
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  }
 
 	SDL_FreeSurface(rawSurface);
 	SDL_FreeSurface(convertedSurface);
 	SDL_FreeSurface(flippedSurface);
 
 	return TextureID;
+}
+
+GLuint CreateColourTexture(int width, int height)
+{
+  if (width == 0)
+    width = SCREEN_WIDTH;
+
+  if (height == 0)
+    height = SCREEN_HEIGHT;
+
+  GLuint result = 0;
+  glGenTextures(1, &result);
+
+  //Create color texture
+  glBindTexture(GL_TEXTURE_2D, result);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+  glBindTexture(GL_TEXTURE_2D, 0);
+  return result;
+}
+
+GLuint CreateColourFTexture(int width, int height)
+{
+  if (width == 0)
+    width = SCREEN_WIDTH;
+
+  if (height == 0)
+    height = SCREEN_HEIGHT;
+
+  GLuint result = 0;
+  glGenTextures(1, &result);
+
+  //Create color texture
+  glBindTexture(GL_TEXTURE_2D, result);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+  glBindTexture(GL_TEXTURE_2D, 0);
+  return result;
+}
+
+GLuint CreateDepthTexture(int width, int height)
+{
+  if (width == 0)
+    width = SCREEN_WIDTH;
+
+  if (height == 0)
+    height = SCREEN_HEIGHT;
+
+  GLuint result = 0;
+  glGenTextures(1, &result);
+  //Create Depth Texture
+  glBindTexture(GL_TEXTURE_2D, result);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+  glBindTexture(GL_TEXTURE_2D, 0);
+  return result;
+}
+
+GLuint CreateVec3Texture(int width, int height)
+{
+  if (width == 0)
+    width = SCREEN_WIDTH;
+
+  if (height == 0)
+    height = SCREEN_HEIGHT;
+
+  GLuint result = 0;
+  glGenTextures(1, &result);
+
+  //Create color texture
+  glBindTexture(GL_TEXTURE_2D, result);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+  glBindTexture(GL_TEXTURE_2D, 0);
+  return result;
 }

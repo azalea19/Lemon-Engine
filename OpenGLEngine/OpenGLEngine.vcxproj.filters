@@ -12,9 +12,6 @@
     <Filter Include="Source\Libraries">
       <UniqueIdentifier>{41198f61-4ebc-4ff4-b750-87706e4902ff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Managers">
-      <UniqueIdentifier>{9224ca2e-3e4f-41c5-84bc-80ee0ab539f6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Model Loader">
       <UniqueIdentifier>{1ac2fd66-4b6e-4e99-88c7-71b669c544f5}</UniqueIdentifier>
     </Filter>
@@ -33,17 +30,41 @@
     <Filter Include="Source\Game">
       <UniqueIdentifier>{3e9af873-0ad3-4865-a334-6293867f23cd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\SceneGraph">
-      <UniqueIdentifier>{18741e4f-99e0-459d-b39f-c4ec1692d2bf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\SceneGraph\Nodes">
-      <UniqueIdentifier>{9779967f-79f9-45bf-9a91-2920f0f0a482}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Data Structures">
       <UniqueIdentifier>{c44c9938-cb18-4f3c-8663-9e866895975e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Animation">
+      <UniqueIdentifier>{8490e679-a7bf-40fe-b496-6a98a89bd1fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\FrameBuffer">
+      <UniqueIdentifier>{7abaf623-762f-458d-b4b7-06b4fd5909a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Effects">
+      <UniqueIdentifier>{1d51c807-1183-48c3-8815-d335de6629a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Lua">
+      <UniqueIdentifier>{77c08998-329c-4689-b3e9-4ee53805db73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Lua\Scripts">
+      <UniqueIdentifier>{93e72492-6193-488f-a5a3-d9af2f8b5669}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Lua\APIs">
+      <UniqueIdentifier>{276ace99-e88b-47ca-b4f0-b7ff8d4534cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Lights">
+      <UniqueIdentifier>{3c1fc56b-3d9f-4b3d-b38d-7b38e6df0f77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Managers">
+      <UniqueIdentifier>{9224ca2e-3e4f-41c5-84bc-80ee0ab539f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Interfaces">
+      <UniqueIdentifier>{883bda9f-ae66-4f5b-a10b-865612a5c250}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Terrain">
-      <UniqueIdentifier>{2514f3fa-5b22-45fc-ad1a-060060c817b4}</UniqueIdentifier>
+      <UniqueIdentifier>{03795911-2baa-4ecd-86d9-dfce942febe8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\OBJWritter">
+      <UniqueIdentifier>{f373ce18-9ba8-4482-b156-10f7516e47cc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -62,16 +83,7 @@
     <ClCompile Include="SoundManager.cpp">
       <Filter>Source\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="Loader.cpp">
-      <Filter>Source\Model Loader</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source\Model Loader</Filter>
-    </ClCompile>
     <ClCompile Include="ObjectInstance.cpp">
-      <Filter>Source\Model Loader</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderableObject.cpp">
       <Filter>Source\Model Loader</Filter>
     </ClCompile>
     <ClCompile Include="PrimitiveCollisions.cpp">
@@ -95,33 +107,6 @@
     <ClCompile Include="ExampleScene.cpp">
       <Filter>Source\Game</Filter>
     </ClCompile>
-    <ClCompile Include="TextureNode.cpp">
-      <Filter>Source\SceneGraph\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="Node.cpp">
-      <Filter>Source\SceneGraph\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelNode.cpp">
-      <Filter>Source\SceneGraph\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshNode.cpp">
-      <Filter>Source\SceneGraph\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="GroupNode.cpp">
-      <Filter>Source\SceneGraph\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="BasicTextureNode.cpp">
-      <Filter>Source\SceneGraph\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="BasicMeshNode.cpp">
-      <Filter>Source\SceneGraph\Nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="UberShader.cpp">
-      <Filter>Source\Data Structures</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneGraph.cpp">
-      <Filter>Source\SceneGraph</Filter>
-    </ClCompile>
     <ClCompile Include="MCamera.cpp">
       <Filter>Source\Game</Filter>
     </ClCompile>
@@ -131,17 +116,95 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Source\Libraries</Filter>
     </ClCompile>
-    <ClCompile Include="MeshLibrary.cpp">
-      <Filter>Source\Libraries</Filter>
+    <ClCompile Include="Skeleton.cpp">
+      <Filter>Source\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="MeshGenerator.cpp">
-      <Filter>Source\SceneGraph</Filter>
+    <ClCompile Include="BoneKeySequence.cpp">
+      <Filter>Source\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="UniformStack.cpp">
-      <Filter>Source\SceneGraph</Filter>
+    <ClCompile Include="AssimpToGLM.cpp">
+      <Filter>Source\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Source\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Source\Model Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source\Model Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source\Model Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderableObject.cpp">
+      <Filter>Source\Model Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameBuffer.cpp">
+      <Filter>Source\FrameBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="AdditiveBlendEffect.cpp">
+      <Filter>Source\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="BloomEffect.cpp">
+      <Filter>Source\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="BlurEffect.cpp">
+      <Filter>Source\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="FXAAEffect.cpp">
+      <Filter>Source\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="HDRSplitEffect.cpp">
+      <Filter>Source\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneDecomposeEffect.cpp">
+      <Filter>Source\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaManager.cpp">
+      <Filter>Source\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="LuaContext.cpp">
+      <Filter>Source\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="PrintAPI.cpp">
+      <Filter>Source\Lua\APIs</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthThresholdEffect.cpp">
+      <Filter>Source\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="GodRaysEffect.cpp">
+      <Filter>Source\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="RayEffect.cpp">
+      <Filter>Source\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="AffineTransformable.cpp">
+      <Filter>Source\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Animatable.cpp">
+      <Filter>Source\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="IMesh.cpp">
+      <Filter>Source\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="IMeshCollection.cpp">
+      <Filter>Source\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="IAnimatedRenderable.cpp">
+      <Filter>Source\Interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLightingEffect.cpp">
+      <Filter>Source\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiplicativeBlendEffect.cpp">
+      <Filter>Source\Effects</Filter>
     </ClCompile>
     <ClCompile Include="HeightMap.cpp">
-      <Filter>Source\SceneGraph</Filter>
+      <Filter>Source\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Source\Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -157,16 +220,7 @@
     <ClInclude Include="SoundManager.h">
       <Filter>Source\Managers</Filter>
     </ClInclude>
-    <ClInclude Include="Loader.h">
-      <Filter>Source\Model Loader</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Source\Model Loader</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectInstance.h">
-      <Filter>Source\Model Loader</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderableObject.h">
       <Filter>Source\Model Loader</Filter>
     </ClInclude>
     <ClInclude Include="GeometricPrimitives.h">
@@ -199,39 +253,6 @@
     <ClInclude Include="Scene.h">
       <Filter>Source\Game</Filter>
     </ClInclude>
-    <ClInclude Include="SceneGraph.h">
-      <Filter>Source\SceneGraph</Filter>
-    </ClInclude>
-    <ClInclude Include="UniformNode.h">
-      <Filter>Source\SceneGraph\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureNode.h">
-      <Filter>Source\SceneGraph\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="Node.h">
-      <Filter>Source\SceneGraph\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelNode.h">
-      <Filter>Source\SceneGraph\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshNode.h">
-      <Filter>Source\SceneGraph\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="MatrixNode.h">
-      <Filter>Source\SceneGraph\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="GroupNode.h">
-      <Filter>Source\SceneGraph\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="BasicTextureNode.h">
-      <Filter>Source\SceneGraph\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="BasicMeshNode.h">
-      <Filter>Source\SceneGraph\Nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="UberShader.h">
-      <Filter>Source\Data Structures</Filter>
-    </ClInclude>
     <ClInclude Include="MCamera.h">
       <Filter>Source\Game</Filter>
     </ClInclude>
@@ -241,26 +262,137 @@
     <ClInclude Include="Texture.h">
       <Filter>Source\Libraries</Filter>
     </ClInclude>
-    <ClInclude Include="MeshLibrary.h">
-      <Filter>Source\Libraries</Filter>
+    <ClInclude Include="MMath.h">
+      <Filter>Source\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>Source\Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Source\Model Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Skeleton.h">
+      <Filter>Source\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="BoneKeySequence.h">
+      <Filter>Source\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="AssimpToGLM.h">
+      <Filter>Source\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Source\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Bimap.h">
+      <Filter>Source\Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Source\Model Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderableObject.h">
+      <Filter>Source\Model Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameBuffer.h">
+      <Filter>Source\FrameBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="BlurEffect.h">
+      <Filter>Source\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="HDRSplitEffect.h">
+      <Filter>Source\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="AdditiveBlendEffect.h">
+      <Filter>Source\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="BloomEffect.h">
+      <Filter>Source\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="FXAAEffect.h">
+      <Filter>Source\Effects</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Source\Libraries</Filter>
+      <Filter>Source\Model Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneDecomposeEffect.h">
+      <Filter>Source\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Mesh.h">
+      <Filter>Source\Model Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaManager.h">
+      <Filter>Source\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaContext.h">
+      <Filter>Source\Lua</Filter>
+    </ClInclude>
+    <ClInclude Include="LuaAPI.h">
+      <Filter>Source\Lua\APIs</Filter>
+    </ClInclude>
+    <ClInclude Include="PrintAPI.h">
+      <Filter>Source\Lua\APIs</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Source\Model Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Source\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthThresholdEffect.h">
+      <Filter>Source\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="GodRaysEffect.h">
+      <Filter>Source\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="RayEffect.h">
+      <Filter>Source\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="IAnimatable.h">
+      <Filter>Source\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IAnimated.h">
+      <Filter>Source\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderable.h">
+      <Filter>Source\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IMesh.h">
+      <Filter>Source\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="IMeshCollection.h">
+      <Filter>Source\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="AffineTransformable.h">
+      <Filter>Source\Interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Source\Model Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="IAnimatedRenderable.h">
+      <Filter>Source\Interfaces</Filter>
     </ClInclude>
     <ClInclude Include="HeightMap.h">
       <Filter>Source\Terrain</Filter>
     </ClInclude>
-    <ClInclude Include="MMath.h">
-      <Filter>Source\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshGenerator.h">
+    <ClInclude Include="Terrain.h">
       <Filter>Source\Terrain</Filter>
     </ClInclude>
-    <ClInclude Include="UniformStack.h">
-      <Filter>Source\Data Structures</Filter>
+    <ClInclude Include="OBJWriter.h">
+      <Filter>Source\OBJWritter</Filter>
     </ClInclude>
-    <ClInclude Include="Singleton.h">
-      <Filter>Source\Data Structures</Filter>
+    <ClInclude Include="MultiplicativeBlendEffect.h">
+      <Filter>Source\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectionalLightingEffect.h">
+      <Filter>Source\Effects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -286,6 +418,69 @@
       <Filter>Source\Shaders</Filter>
     </None>
     <None Include="uberShader.vert">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="HDRSplitEffect.frag">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="HDRSplitEffect.vert">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="TextureDisplay.frag">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="TextureDisplay.vert">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="BlurEffect.frag">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="BlurEffect.vert">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="AdditiveBlendEffect.frag">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="AdditiveBlendEffect.vert">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="FXAAEffect.frag">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="FXAAEffect.vert">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="SceneDecomposeEffect.frag">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="SceneDecomposeEffect.vert">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="Game.lua">
+      <Filter>Source\Lua\Scripts</Filter>
+    </None>
+    <None Include="DepthThresholdEffect.frag">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="DepthThresholdEffect.vert">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="RayEffect.vert">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="RayEffect.frag">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="MultiplicativeBlendEffect.frag">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="MultiplicativeBlendEffect.vert">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="DirectionalLightingEffect.frag">
+      <Filter>Source\Shaders</Filter>
+    </None>
+    <None Include="DirectionalLightingEffect.vert">
       <Filter>Source\Shaders</Filter>
     </None>
   </ItemGroup>
